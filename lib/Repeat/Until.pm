@@ -70,13 +70,20 @@ C<$delay> defaults to C<1> second.
 
 sub repeat_until : prototype(&;$$) ( $cr, $reps = 0, $interval = 1 ) {
 
-    while ( $reps-- > 0 ) {
-        my @result = wantarray ? $cr->() : ( scalar( $cr->() ) ) ;
+    $reps-- if $reps == 0 ;    # forever until true
 
-        if ( $result[0] or @result ) {    # order is important
-            return @result    if wantarray ;
-            return $result[0] if defined wantarray ;
-            return ;
+    while ( $reps-- != 0 ) {
+        if (wantarray) {
+            my @result = $cr->() ;
+            return @result if @result ;
+            }
+        elsif ( defined wantarray ) {
+            my $result = $cr->() ;
+            return $result if $result ;
+            }
+        else {
+            my $result = $cr->() ;
+            return if $result ;
             }
 
         sleep $interval ;
