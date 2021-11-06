@@ -38,7 +38,7 @@ Context aware - the coderef is run in the same list or scalar context as C<repea
 
 In void context, the coderef is run in scalar context, but no value is returned when the coderef returns true.
 
-=head1 GOTCHA!
+=head2 Gotcha!
 
 Note there is no comma after the coderef in the argument list. This will cause you pain if you forget it.
 The error generated is:
@@ -77,13 +77,9 @@ sub repeat_until : prototype(&;$$) ( $cr, $reps = 0, $interval = 1 ) {
             my @result = $cr->() ;
             return @result if @result ;
             }
-        elsif ( defined wantarray ) {
-            my $result = $cr->() ;
-            return $result if $result ;
-            }
-        else {
-            my $result = $cr->() ;
-            return if $result ;
+        elsif ( my $result = $cr->() ) {
+            return $result if defined wantarray ;    # scalar
+            return ;                                 # void
             }
 
         sleep $interval ;

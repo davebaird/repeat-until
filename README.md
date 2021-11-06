@@ -23,7 +23,7 @@ Context aware - the coderef is run in the same list or scalar context as `repeat
 
 In void context, the coderef is run in scalar context, but no value is returned when the coderef returns true.
 
-# GOTCHA!
+## Gotcha!
 
 Note there is no comma after the coderef in the argument list. This will cause you pain if you forget it.
 The error generated is:
