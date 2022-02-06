@@ -13,6 +13,10 @@
 
     write_stuff_to( $file ) if $file ;
 
+    # if you want to report progress:
+
+    my $file = repeat_until { my $try = shift; warn "Try $try of $tries" ; get_locked_file() } $tries, $delay ;
+
 # DESCRIPTION
 
 Repeatedly run a coderef for a max number of tries, short-cutting when it returns true.
@@ -36,10 +40,14 @@ BUT Perl reports the wrong line.
 
 The module exports a single subroutine.
 
-- `repeat_until( $coderef, [$repeats], [$delay])`
+- `repeat_until( $coderef [$repeats], [$delay])`
 
     `$repeats` and `$delay` are optional.
 
     `$repeats` defaults to `0`, meaning repeat indefinitely until coderef returns true.
 
     `$delay` defaults to `1` second.
+
+    Note that there is no comma between coderef and `$repeats`.
+
+    The current try counter is passed to the coderef.
