@@ -13,7 +13,9 @@
 
     write_stuff_to( $file ) if $file ;
 
-    # if you want to report progress:
+    # -----
+
+    # The 'try' counter is passed to the anonymous sub:
 
     my $file = repeat_until { my $try = shift; warn "Try $try of $tries" ; get_locked_file() } $tries, $delay ;
 
