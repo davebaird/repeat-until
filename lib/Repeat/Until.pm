@@ -28,6 +28,10 @@ C<Repeat::Until> - run a coderef until it returns true
 
     write_stuff_to( $file ) if $file ;
 
+    # if you want to report progress:
+
+    my $file = repeat_until { my $try = shift; warn "Try $try of $tries" ; get_locked_file() } $tries, $delay ;
+
 =head1 DESCRIPTION
 
 Repeatedly run a coderef for a max number of tries, short-cutting when it returns true.
@@ -54,7 +58,7 @@ The module exports a single subroutine.
 
 =over 4
 
-=item C<repeat_until( $coderef, [$repeats], [$delay])>
+=item C<repeat_until( $coderef [$repeats], [$delay])>
 
 
 C<$repeats> and C<$delay> are optional.
@@ -63,6 +67,10 @@ C<$repeats> defaults to C<0>, meaning repeat indefinitely until coderef returns 
 
 C<$delay> defaults to C<1> second.
 
+Note that there is no comma between coderef and C<$repeats>.
+
+The current try counter is passed to the coderef.
+
 =back
 
 =cut
@@ -70,14 +78,14 @@ C<$delay> defaults to C<1> second.
 
 sub repeat_until : prototype(&;$$) ( $cr, $reps = 0, $interval = 1 ) {
 
-    $reps-- if $reps == 0 ;    # forever until true
+    my $try = 0 ;
 
-    while ( $reps-- != 0 ) {
+    while ( $try++ < $reps or $reps == 0 ) {
         if (wantarray) {
-            my @result = $cr->() ;
+            my @result = $cr->($try) ;
             return @result if @result ;
             }
-        elsif ( my $result = $cr->() ) {
+        elsif ( my $result = $cr->($try) ) {
             return $result if defined wantarray ;    # scalar
             return ;                                 # void
             }
